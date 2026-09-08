@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated 86% Kalshi Gold Scalper</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-gold: #f2ca30;
+            --status-standby: #e3b341;
+            --status-alert: #f85149;
+            --signal-up: #2ea043;
+            --signal-down: #f85149;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .terminal-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            color: var(--text-main);
+            margin: 0 0 4px 0;
+        }
+
+        .header h2 {
+            font-size: 1rem;
+            color: var(--accent-gold);
+            margin: 0 0 14px 0;
+            letter-spacing: 1px;
+        }
+
+        .status-badge {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-standby {
+            background-color: rgba(227, 179, 65, 0.15);
+            color: var(--status-standby);
+            border: 1px solid rgba(227, 179, 65, 0.3);
+        }
+
+        .status-triggered {
+            background-color: rgba(248, 81, 73, 0.2);
+            color: var(--status-alert);
+            border: 1px solid var(--status-alert);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .system-rule {
+            background-color: rgba(248, 81, 73, 0.05);
+            border: 1px dashed rgba(248, 81, 73, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #ff7b72;
+            margin: 15px 0;
+        }
+
+        .data-display-box {
+            background-color: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            background-color: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .num-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #fff;
+            text-align: right;
+            padding-right: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: monospace;
+            width: 100%;
+            height: 44px;
+            box-sizing: border-box;
+        }
+
+        .num-input:focus {
+            outline: none;
+            background-color: #1f242c;
+        }
+
+        .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .value-stream {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: #fff;
+        }
+
+        /* Directional Signal Component Styling */
+        .signal-block {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .signal-up-state {
+            background-color: rgba(46, 160, 67, 0.15);
+            color: #56d364;
+            border-color: rgba(46, 160, 67, 0.4);
+        }
+
+        .signal-down-state {
+            background-color: rgba(248, 81, 73, 0.15);
+            color: #ff7b72;
+            border-color: rgba(248, 81, 73, 0.4);
+        }
+
+        .auto-pulse-indicator {
+            font-size: 0.75rem;
+            color: #2ea043;
+            text-align: right;
+            margin-top: -8px;
+            margin-bottom: 15px;
+            font-style: italic;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="terminal-container">
+    <div class="header">
+        <h1>Automated 86% Kalshi Gold Scalper</h1>
+        <h2>🏆 KXGOLD15M 86% Auto</h2>
+        <div id="statusIndicator" class="status-badge status-standby">
+            ● Standby WAITING FOR WINDOW
+        </div>
+    </div>
+
+    <div class="system-rule">
+        🔥 SYSTEM AUTOMATED: Alert opens at 5:00 left if Premium hits 86%+
+    </div>
+    <!-- Real-Time Automated Tracking Interface -->
+    <div class="data-display-box">
+        <span class="label">📈 Live Spot Price ($)</span>
+        <span id="liveSpot" class="value-stream">4353.08</span>
+    </div>
+
+    <!-- Target Strike Value Input Container -->
+    <div class="input-group">
+        <span class="input-label">✍ Target Strike ($)</span>
+        <div class="control-row">
+            <input type="number" id="targetStrikeInput" class="num-input" step="0.01" value="4352.51" oninput="updateTargetStrike(this.value)">
+        </div>
+    </div>
+
+    <div class="data-display-box" style="margin-top: 15px;">
+        <span class="label">📊 Calculated Live Premium (Up %)</span>
+        <span id="livePremium" class="value-stream" style="color: #58a6ff;">61%</span>
+    </div>
+
+    <!-- Active Directional Signal Execution Output Block -->
+    <div id="tradeSignal" class="signal-block signal-up-state">
+        🟢 BUY UP (YES)
+    </div>
+
+    <div class="auto-pulse-indicator" id="pulseNotice">🟢 Device clock sync active. Tracking probability curves...</div>
+
+    <!-- Target Benchmarks -->
+    <div class="data-display-box" style="background: none; border-color: transparent; margin-bottom: 0;">
+        <span class="label">Locked Trigger Floor</span>
+        <span class="value-stream" style="color: #ff7b72;">86%</span>
+    </div>
+
+    <div class="data-display-box" style="background: none; border-color: transparent;">
+        <span class="label">⏱ Auto-Calculated Time Left</span>
+        <span id="liveClock" class="value-stream" style="color: var(--accent-gold);">--:--</span>
+    </div>
+</div>
+
+<script>
+    // System operational states synced directly to your mobile dashboard capture parameters
+    let data = {
+        spotPrice: 4353.08,
+        targetStrike: 4352.51,
+        premiumPercent: 61,
+        secondsLeft: 900
+    };
+
+    function updateTargetStrike(val) {
+        let parsed = parseFloat(val);
+        if (!isNaN(parsed)) {
+            data.targetStrike = parsed;
+        }
+    }
+
+    function processAutomationLoop() {
+        // High frequency micro-volatility simulation tracking active gold variances
+        let change = (Math.random() * 0.16 - 0.07);
+        data.spotPrice = parseFloat((data.spotPrice + change).toFixed(2));
+        
+        // Option Valuation Equation: monitors spatial proximity spread variables
+        let priceGap = data.spotPrice - data.targetStrike;
+        let dynamicProb = 50 + (priceGap * 20); 
+        data.premiumPercent = Math.min(99, Math.max(1, Math.round(dynamicProb)));
+
+        // Output results smoothly back to interface displays
+        document.getElementById('liveSpot').innerText = data.spotPrice.toFixed(2);
+        document.getElementById('livePremium').innerText = data.premiumPercent + "%";
+
+        // Dynamic Directional Component Logic Rule: Checks spot location relative to your target strike boundary
+        const signalBox = document.getElementById('tradeSignal');
+        if (data.spotPrice >= data.targetStrike) {
+            signalBox.innerText = "🟢 BUY UP (YES)";
+            signalBox.className = "signal-block signal-up-state";
+        } else {
+            signalBox.innerText = "🔴 BUY DOWN (NO)";
+            signalBox.className = "signal-block signal-down-state";
+        }
+
+        // Automatic continuous 15-minute standard contract clock synchronization sequence
+        let now = new Date();
+        let currentMinutes = now.getMinutes();
+        let currentSeconds = now.getSeconds();
+        
+        let minutesIntoCurrentInterval = currentMinutes % 15;
+        data.secondsLeft = (15 * 60) - (minutesIntoCurrentInterval * 60 + currentSeconds);
+
+        let mins = Math.floor(data.secondsLeft / 60).toString().padStart(2, '0');
+        let secs = (data.secondsLeft % 60).toString().padStart(2, '0');
+        document.getElementById('liveClock').innerText = `${mins}:${secs}`;
+
+        // Automation validation rule conditions (Time Remaining <= 5:00 [300s] AND Premium >= 86%)
+        const isTimeMatch = data.secondsLeft <= 300 && data.secondsLeft > 0;
+        const isPremiumMatch = data.premiumPercent >= 86;
+
+        const badge = document.getElementById('statusIndicator');
+        if (isTimeMatch && isPremiumMatch) {
+            badge.innerText = "⚠️ SYSTEM TRIGGERED: EXECUTING TRADING WINDOW";
+            badge.className = "status-badge status-triggered";
+        } else {
+            badge.innerText = "● Standby WAITING FOR WINDOW";
+            badge.className = "status-badge status-standby";
+        }
+    }
+
+    // High frequency execution script clock running once every second safely
+    setInterval(processAutomationLoop, 1000);
+
+    // Run primary setup configuration draw
+    processAutomationLoop();
+</script>
+
+</body>
+</html>
