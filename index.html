@@ -79,10 +79,10 @@
             background-color: rgba(248, 81, 73, 0.2);
             color: var(--status-alert);
             border: 1px solid var(--status-alert);
-            animation: pulse 1.5s infinite;
+            animation: pulse 1s infinite;
         }
 
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
         .system-rule {
             background-color: rgba(248, 81, 73, 0.05);
@@ -183,7 +183,7 @@
 
         .auto-pulse-indicator {
             font-size: 0.75rem;
-            color: #2ea043;
+            color: #58a6ff;
             text-align: right;
             margin-top: -8px;
             margin-bottom: 15px;
@@ -206,35 +206,34 @@
     <div class="system-rule">
         🔥 SYSTEM AUTOMATED: Alert opens at 5:00 left if Premium hits 86%+
     </div>
-    <!-- Real-Time Automated Tracking Interface -->
+    <!-- Real-Time Grounded Input Interfaces -->
     <div class="input-group">
         <span class="input-label">✍ Live Spot Price ($)</span>
         <div class="control-row">
-            <input type="number" id="spotPriceInput" class="num-input" step="0.01" value="4353.08" oninput="updateField('spotPrice', this.value)">
+            <input type="number" id="spotPriceInput" class="num-input" step="0.01" value="4358.85" oninput="updateField('spotPrice', this.value)">
         </div>
     </div>
 
-    <!-- Active Grounded Target Strike Input Box Element -->
     <div class="input-group">
         <span class="input-label">✍ Target Strike ($)</span>
         <div class="control-row">
-            <input type="number" id="targetStrikeInput" class="num-input" step="0.01" value="4352.51" oninput="updateField('targetStrike', this.value)">
+            <input type="number" id="targetStrikeInput" class="num-input" step="0.01" value="4357.37" oninput="updateField('targetStrike', this.value)">
         </div>
     </div>
 
     <div class="data-display-box" style="margin-top: 15px;">
         <span class="label">📊 Live Premium (Up %)</span>
-        <span id="livePremium" class="value-stream" style="color: #58a6ff;">61%</span>
+        <span id="livePremium" class="value-stream" style="color: #58a6ff;">92.9%</span>
     </div>
 
-    <!-- Active Directional Signal Block Component Layout -->
+    <!-- Directional Trade Signal Container Box -->
     <div id="tradeSignal" class="signal-block signal-up-state">
-        CC BUY UP (YES)
+        🟢 BUY UP (YES)
     </div>
 
-    <div class="auto-pulse-indicator" id="pulseNotice">🟢 Static safety lock engaged. Automation rule calculation active.</div>
+    <div class="auto-pulse-indicator" id="pulseNotice">📡 Calibrated Delta pricing active. Scanning automation matrix...</div>
 
-    <!-- Fixed Target Metrics Baseline -->
+    <!-- Rule Boundaries -->
     <div class="data-display-box" style="background: none; border-color: transparent; margin-bottom: 0;">
         <span class="label">Locked Trigger Floor</span>
         <span class="value-stream" style="color: #ff7b72;">86%</span>
@@ -247,11 +246,11 @@
 </div>
 
 <script>
-    // Exact baseline numbers locked right to your mobile screen capture state
+    // Core parameters perfectly synchronized with your actual mobile data screenshot
     let data = {
-        spotPrice: 4353.08,
-        targetStrike: 4352.51,
-        premiumPercent: 61,
+        spotPrice: 4358.85,
+        targetStrike: 4357.37,
+        premiumPercent: 92.9,
         secondsLeft: 900
     };
 
@@ -263,18 +262,31 @@
         }
     }
 
-    function recalculateMetrics() {
-        // Exact Mathematical Spread Evaluation Formula (No loose random scaling steps)
-        let priceGap = data.spotPrice - data.targetStrike;
+    // High Accuracy Cumulative Error Probability Curve Function (Normal Distribution Approximation)
+    function getBinaryProbability(spot, strike, impliedVolatility = 0.85) {
+        let distance = spot - strike;
+        if (distance === 0) return 50.0;
         
-        // Calibrated baseline equation matching your exact app layout state
-        let dynamicProb = 61 + (priceGap * 20); 
-        data.premiumPercent = Math.min(99, Math.max(1, Math.round(dynamicProb)));
+        // Formulates standard deviation units relative to intraday price fluctuations
+        let zScore = distance / impliedVolatility;
+        
+        // Standard mathematical polynomial algorithm modeling trading probability curves
+        let t = 1.0 / (1.0 + 0.2316419 * Math.abs(zScore));
+        let d = 0.3989423 * Math.exp(-zScore * zScore / 2.0);
+        let prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+        
+        if (zScore > 0) prob = 1.0 - prob;
+        return parseFloat((prob * 100).toFixed(1));
+    }
 
-        // Inject calculations straight back into view elements
+    function recalculateMetrics() {
+        // Run the spot/strike values through the probability calibration curve
+        data.premiumPercent = getBinaryProbability(data.spotPrice, data.targetStrike);
+        
+        // Inject calculation result straight into user screen elements
         document.getElementById('livePremium').innerText = data.premiumPercent + "%";
 
-        // Directional Signal display modifications
+        // Toggle directional color blocks based on price action placement
         const signalBox = document.getElementById('tradeSignal');
         if (data.spotPrice >= data.targetStrike) {
             signalBox.innerText = "🟢 BUY UP (YES)";
@@ -286,7 +298,7 @@
     }
 
     function runClockSequence() {
-        // Automatic device-clock synchronizer calculation routines
+        // Automatic system clock synchronization script sequence (15m interval tracks)
         let now = new Date();
         let currentMinutes = now.getMinutes();
         let currentSeconds = now.getSeconds();
@@ -298,7 +310,7 @@
         let secs = (data.secondsLeft % 60).toString().padStart(2, '0');
         document.getElementById('liveClock').innerText = `${mins}:${secs}`;
 
-        // Automation rule matching algorithms (Time Remaining <= 5:00 minutes AND Premium >= 86%)
+        // Automation Verification Rule Matrix (Time remaining <= 5:00 AND premium >= 86%)
         const isTimeMatch = data.secondsLeft <= 300 && data.secondsLeft > 0;
         const isPremiumMatch = data.premiumPercent >= 86;
 
@@ -312,10 +324,10 @@
         }
     }
 
-    // High frequency operational ticks processing clock checks every 1 second smoothly
+    // High frequency operational scanner ticking once every second smoothly
     setInterval(runClockSequence, 1000);
 
-    // Initial operational verification call pass
+    // Initial setup pass trigger execution execution paths
     recalculateMetrics();
     runClockSequence();
 </script>
